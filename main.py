@@ -1,8 +1,10 @@
 # Uses python3
-import sys
 from GameBoard import GameBoard
 
+sequence_of_move = ""
 
+
+# Method to display the candy box after each move
 def draw_state(candy_state):
     i = 0
     print("\n")
@@ -17,65 +19,72 @@ def draw_state(candy_state):
             print("\n")
 
 
+# Check goal state after each move
+# Return True if it has reached at Goal State else False
 def check_goal_state():
+    global sequence_of_move
     a_to_e = tileA.get_candy_value() + tileB.get_candy_value() + tileC.get_candy_value() + tileD.get_candy_value() + tileE.get_candy_value()
     k_to_o = tileK.get_candy_value() + tileL.get_candy_value() + tileM.get_candy_value() + tileN.get_candy_value() + tileO.get_candy_value()
 
     if a_to_e == k_to_o:
+        print("You Won..!!")
+        output_file = open("output.txt", "w+")
+        output_file.write(sequence_of_move)
+        output_file.write("\n Total No. of Moves : " + str(len(sequence_of_move.replace(" ", ""))))
         return True
     else:
         return False
 
 
+# Take input(U, D, L, R) and check for legal or illegal move
 def game_input():
     move = input("Enter Move : ")
     current_tile_possible_moves = empty_tile.get_possible_moves()
     for possible_move in current_tile_possible_moves:
         if move.upper() == possible_move or move.lower() == possible_move:
-            print("move tile")
+            # print("move tile")
             move_tile(move)
             return
     print("Not a valid move.")
 
 
+# Move candy tile if the input is valid
 def move_tile(move):
     global empty_tile
-    if move == "U" or move == "u":
+    global sequence_of_move
 
+    if move == "U" or move == "u":
         neighbour_tile = empty_tile.get_candy_object_up()
+        sequence_of_move = sequence_of_move + " " + neighbour_tile.get_tile_name()
         empty_tile.set_candy_value(neighbour_tile.get_candy_value())
         neighbour_tile.set_candy_value("e")
         empty_tile = neighbour_tile
-        print("Move Up")
     elif move == "D" or move == "d":
-        # global empty_tile
         neighbour_tile = empty_tile.get_candy_object_down()
+        sequence_of_move = sequence_of_move + " " + neighbour_tile.get_tile_name()
         empty_tile.set_candy_value(neighbour_tile.get_candy_value())
         neighbour_tile.set_candy_value("e")
         empty_tile = neighbour_tile
-        print("Move Down")
     elif move == "L" or move == "l":
-        # global empty_tile
         neighbour_tile = empty_tile.get_candy_object_left()
+        sequence_of_move = sequence_of_move + " " + neighbour_tile.get_tile_name()
         empty_tile.set_candy_value(neighbour_tile.get_candy_value())
         neighbour_tile.set_candy_value("e")
         empty_tile = neighbour_tile
-        print("Move Left")
     elif move == "R" or move == "r":
-        # global empty_tile
         neighbour_tile = empty_tile.get_candy_object_right()
+        sequence_of_move = sequence_of_move + " " + neighbour_tile.get_tile_name()
         empty_tile.set_candy_value(neighbour_tile.get_candy_value())
         neighbour_tile.set_candy_value("e")
         empty_tile = neighbour_tile
-        print("Move Right")
 
     new_state = []
     for new_tile_object in tile_object_lst:
         new_state.append(new_tile_object.get_candy_value())
     draw_state(new_state)
-    # check_goal_state(AtoE, KtoO)
 
 
+# Set possible moves for each candy tile
 def set_possible_movies_for_all_tiles():
     tileA.set_possible_moves(["L", "U"])
     tileB.set_possible_moves(["L", "R", "U"])
@@ -94,6 +103,7 @@ def set_possible_movies_for_all_tiles():
     tileO.set_possible_moves(["R", "D"])
 
 
+# Set neighbour tiles for each candy tiles
 def set_neighbor_tiles():
 
     # TileA
