@@ -2,17 +2,21 @@
 
 
 class GameBoard:
-    candy_value = ""
-    tile_name = ""
-    possible_moves = []
-    candy_object_left = None
-    candy_object_right = None
-    candy_object_up = None
-    candy_object_down = None
+    # candy_value = ""
+    # tile_name = ""
+    # possible_moves = []
+    # candy_object_left = None
+    # candy_object_right = None
+    # candy_object_up = None
+    # candy_object_down = None
 
     def __init__(self, candy_value, tile_name):
         self.candy_value = candy_value
         self.tile_name = tile_name
+        self.candy_object_left = None
+        self.candy_object_right = None
+        self.candy_object_up = None
+        self.candy_object_down = None
 
     def set_candy_value(self, candy_value):
         self.candy_value = candy_value
@@ -26,7 +30,7 @@ class GameBoard:
     def get_possible_moves(self):
         return self.possible_moves
 
-    def set_possible_moves(self,possible_moves):
+    def set_possible_moves(self, possible_moves):
         self.possible_moves = possible_moves
 
     def set_candy_object_left(self,candy_object_left):

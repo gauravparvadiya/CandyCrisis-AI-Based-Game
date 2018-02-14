@@ -17,6 +17,16 @@ def draw_state(candy_state):
             print("\n")
 
 
+def check_goal_state():
+    a_to_e = tileA.get_candy_value() + tileB.get_candy_value() + tileC.get_candy_value() + tileD.get_candy_value() + tileE.get_candy_value()
+    k_to_o = tileK.get_candy_value() + tileL.get_candy_value() + tileM.get_candy_value() + tileN.get_candy_value() + tileO.get_candy_value()
+
+    if a_to_e == k_to_o:
+        return True
+    else:
+        return False
+
+
 def game_input():
     move = input("Enter Move : ")
     current_tile_possible_moves = empty_tile.get_possible_moves()
@@ -29,15 +39,41 @@ def game_input():
 
 
 def move_tile(move):
+    global empty_tile
     if move == "U" or move == "u":
+
         neighbour_tile = empty_tile.get_candy_object_up()
-        empty_tile.set_candy_value(neighbour_tile)
+        empty_tile.set_candy_value(neighbour_tile.get_candy_value())
+        neighbour_tile.set_candy_value("e")
+        empty_tile = neighbour_tile
+        print("Move Up")
     elif move == "D" or move == "d":
+        # global empty_tile
+        neighbour_tile = empty_tile.get_candy_object_down()
+        empty_tile.set_candy_value(neighbour_tile.get_candy_value())
+        neighbour_tile.set_candy_value("e")
+        empty_tile = neighbour_tile
         print("Move Down")
     elif move == "L" or move == "l":
+        # global empty_tile
+        neighbour_tile = empty_tile.get_candy_object_left()
+        empty_tile.set_candy_value(neighbour_tile.get_candy_value())
+        neighbour_tile.set_candy_value("e")
+        empty_tile = neighbour_tile
         print("Move Left")
     elif move == "R" or move == "r":
+        # global empty_tile
+        neighbour_tile = empty_tile.get_candy_object_right()
+        empty_tile.set_candy_value(neighbour_tile.get_candy_value())
+        neighbour_tile.set_candy_value("e")
+        empty_tile = neighbour_tile
         print("Move Right")
+
+    new_state = []
+    for new_tile_object in tile_object_lst:
+        new_state.append(new_tile_object.get_candy_value())
+    draw_state(new_state)
+    # check_goal_state(AtoE, KtoO)
 
 
 def set_possible_movies_for_all_tiles():
@@ -85,7 +121,7 @@ def set_neighbor_tiles():
 
     # TileF
     tileF.set_candy_object_up(tileK)
-    tileF.set_candy_object_right(tileG)
+    tileF.set_candy_object_left(tileG)
     tileF.set_candy_object_down(tileA)
 
     # TileG
@@ -171,11 +207,11 @@ if __name__ == "__main__":
     set_possible_movies_for_all_tiles()
     set_neighbor_tiles()
 
-    tile_object_lst = [tileA, tileB, tileC, tileD, tileF, tileG, tileH, tileI, tileJ, tileK, tileM, tileN, tileO]
+    tile_object_lst = [tileA, tileB, tileC, tileD, tileE, tileF, tileG, tileH, tileI, tileJ, tileK, tileL, tileM, tileN, tileO]
 
     for tile_object in tile_object_lst:
         if tile_object.get_candy_value() == "e":
             empty_tile = tile_object
-    test = empty_tile.get_candy_object_left()
 
-    game_input()
+    while not check_goal_state():
+        game_input()
