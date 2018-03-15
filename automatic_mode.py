@@ -4,7 +4,7 @@ from GameNode import GameNode
 import timeit
 
 open_list = []
-# closed_list = []
+closed_list = []
 
 
 # Check goal state after each move
@@ -22,12 +22,15 @@ def check_goal_state(current_node):
             k_to_o = k_to_o + candy
         i += 1
     if a_to_e == k_to_o:
-        print("You Won..!!")
         solution_path = ""
+        print("\nGoal State: ")
+        draw_state(current_node.get_node_candy_setup())
         while current_node.get_node_parent():
             solution_path += current_node.get_node_name()
             current_node = current_node.get_node_parent()
-        print(solution_path[::-1])
+        # print(solution_path[::-1])
+        print("You Won..!!")
+        print("_______________________________________")
         # output_file = open("output.txt", "a+")
         output_file.write(solution_path[::-1] + "\n")
         all_solution_path += len(solution_path)
@@ -274,6 +277,23 @@ def move_tile(move, empty_tile):
     return node_name, new_state, heuristic
 
 
+def write_closed_list_to_file():
+    for closed in closed_list:
+        i = 0
+        visual_trace.write("\n")
+        candy_state = closed.get_node_candy_setup()
+        for ic in candy_state:
+            if ic == "e":
+                visual_trace.write("       ")
+            else:
+                visual_trace.write(ic + "      ")
+            i += 1
+            if i == 5:
+                i = 0
+                visual_trace.write("\n")
+    visual_trace.write("______________________________________________")
+
+
 def path_finder(initial_node):
     open_list.append(initial_node)
     # print(open_list)
@@ -282,12 +302,13 @@ def path_finder(initial_node):
         current = open_list[0]
         # print(current)
         open_list.pop(0)
+        closed_list.append(current)
         # print("Open list")
         # print(open_list)
         # draw_state(current.get_node_candy_setup())
         if check_goal_state(current):
             return
-        # closed_list.append(current)
+
         # print("closed list")
         # print(closed_list)
         create_child_node(current)
@@ -302,18 +323,19 @@ if __name__ == "__main__":
     print("Right : R/r")
     print("Left : L/l")
     output_file = open("output.txt", "w+")
+    visual_trace = open("visual_trace.txt", "w+")
     all_solution_path = 0
     # output_file.flush()
     for inp in inputs:
         start_time = timeit.default_timer()
         input_candies = []
         open_list = []
+        closed_list = []
         for ip in inp:
             if ip != " ":
                 input_candies.append(ip)
-
+        print("Initial State:")
         draw_state(input_candies)
-        print("")
 
         # Create object per each Tile.
         tileA = GameBoard(input_candies[0], "A")
@@ -347,4 +369,5 @@ if __name__ == "__main__":
         initial = GameNode(empty_tile1.get_tile_name(), input_candies, count_heuristic(), None, "")
         path_finder(initial)
         output_file.write(str(round((timeit.default_timer() - start_time)*1000)) + "ms" + "\n")
+        write_closed_list_to_file()
     output_file.write(str(all_solution_path))
