@@ -2,7 +2,7 @@
 from GameBoard import GameBoard
 import os
 
-sequence_of_move = ""
+sequence_of_move = None
 all_solution_path = 0
 
 
@@ -201,45 +201,46 @@ if __name__ == "__main__":
     if selection == "1":
         print("Automatic")
         os.system("python3 automatic_mode.py")
+    else:
+        for ls in lst:
+            sequence_of_move = None
+            input_candies = []
+            for ip in ls:
+                if ip != " ":
+                    input_candies.append(ip)
 
-    for ls in lst:
-        sequence_of_move = ""
-        input_candies = []
-        for ip in ls:
-            if ip != " ":
-                input_candies.append(ip)
+            draw_state(input_candies)
+            print("")
 
-        draw_state(input_candies)
-        print("")
+            # Create object per each Tile.
+            tileA = GameBoard(input_candies[0], "A")
+            tileB = GameBoard(input_candies[1], "B")
+            tileC = GameBoard(input_candies[2], "C")
+            tileD = GameBoard(input_candies[3], "D")
+            tileE = GameBoard(input_candies[4], "E")
+            tileF = GameBoard(input_candies[5], "F")
+            tileG = GameBoard(input_candies[6], "G")
+            tileH = GameBoard(input_candies[7], "H")
+            tileI = GameBoard(input_candies[8], "I")
+            tileJ = GameBoard(input_candies[9], "J")
+            tileK = GameBoard(input_candies[10], "K")
+            tileL = GameBoard(input_candies[11], "L")
+            tileM = GameBoard(input_candies[12], "M")
+            tileN = GameBoard(input_candies[13], "N")
+            tileO = GameBoard(input_candies[14], "O")
 
-        # Create object per each Tile.
-        tileA = GameBoard(input_candies[0], "A")
-        tileB = GameBoard(input_candies[1], "B")
-        tileC = GameBoard(input_candies[2], "C")
-        tileD = GameBoard(input_candies[3], "D")
-        tileE = GameBoard(input_candies[4], "E")
-        tileF = GameBoard(input_candies[5], "F")
-        tileG = GameBoard(input_candies[6], "G")
-        tileH = GameBoard(input_candies[7], "H")
-        tileI = GameBoard(input_candies[8], "I")
-        tileJ = GameBoard(input_candies[9], "J")
-        tileK = GameBoard(input_candies[10], "K")
-        tileL = GameBoard(input_candies[11], "L")
-        tileM = GameBoard(input_candies[12], "M")
-        tileN = GameBoard(input_candies[13], "N")
-        tileO = GameBoard(input_candies[14], "O")
+            # Setup initial board with given input
+            set_possible_movies_for_all_tiles()
+            set_neighbor_tiles()
 
-        # Setup initial board with given input
-        set_possible_movies_for_all_tiles()
-        set_neighbor_tiles()
+            tile_object_lst = [tileA, tileB, tileC, tileD, tileE, tileF, tileG, tileH, tileI, tileJ, tileK, tileL,
+                               tileM,
+                               tileN, tileO]
 
-        tile_object_lst = [tileA, tileB, tileC, tileD, tileE, tileF, tileG, tileH, tileI, tileJ, tileK, tileL, tileM,
-                           tileN, tileO]
+            for tile_object in tile_object_lst:
+                if tile_object.get_candy_value() == "e":
+                    empty_tile = tile_object
 
-        for tile_object in tile_object_lst:
-            if tile_object.get_candy_value() == "e":
-                empty_tile = tile_object
-
-        while not check_goal_state():
-            game_input()
-    output_file.write(str(all_solution_path))
+            while not check_goal_state():
+                game_input()
+        output_file.write(str(all_solution_path))
