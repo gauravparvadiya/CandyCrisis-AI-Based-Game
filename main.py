@@ -1,7 +1,9 @@
 # Uses python3
 from GameBoard import GameBoard
+import os
 
 sequence_of_move = ""
+all_solution_path = 0
 
 
 # Method to display the candy box after each move
@@ -23,14 +25,15 @@ def draw_state(candy_state):
 # Return True if it has reached at Goal State else False
 def check_goal_state():
     global sequence_of_move
+    global all_solution_path
     a_to_e = tileA.get_candy_value() + tileB.get_candy_value() + tileC.get_candy_value() + tileD.get_candy_value() + tileE.get_candy_value()
     k_to_o = tileK.get_candy_value() + tileL.get_candy_value() + tileM.get_candy_value() + tileN.get_candy_value() + tileO.get_candy_value()
 
     if a_to_e == k_to_o:
         print("You Won..!!")
-        output_file = open("output.txt", "w+")
-        output_file.write(sequence_of_move)
-        output_file.write("\n Total No. of Moves : " + str(len(sequence_of_move.replace(" ", ""))))
+        output_file.write(sequence_of_move + "\n")
+        output_file.write(str(len(sequence_of_move.replace(" ", ""))) + "\n")
+        all_solution_path += len(sequence_of_move.replace(" ", ""))
         return True
     else:
         return False
@@ -183,45 +186,60 @@ def set_neighbor_tiles():
 
 if __name__ == "__main__":
     lst = list(open("Sample_Data.txt"))
-    input_candies = []
-    for ip in lst[0]:
-        if ip != " ":
-            input_candies.append(ip)
+
     print("Use Following commands to move Candies.")
     print("Up : U/u")
     print("Down : D/d")
     print("Right : R/r")
     print("Left : L/l")
 
-    draw_state(input_candies)
-    print("")
+    output_file = open("output.txt", "w+")
 
-    # Create object per each Tile.
-    tileA = GameBoard(input_candies[0],"A")
-    tileB = GameBoard(input_candies[1],"B")
-    tileC = GameBoard(input_candies[2],"C")
-    tileD = GameBoard(input_candies[3],"D")
-    tileE = GameBoard(input_candies[4],"E")
-    tileF = GameBoard(input_candies[5],"F")
-    tileG = GameBoard(input_candies[6],"G")
-    tileH = GameBoard(input_candies[7],"H")
-    tileI = GameBoard(input_candies[8],"I")
-    tileJ = GameBoard(input_candies[9],"J")
-    tileK = GameBoard(input_candies[10],"K")
-    tileL = GameBoard(input_candies[11],"L")
-    tileM = GameBoard(input_candies[12],"M")
-    tileN = GameBoard(input_candies[13],"N")
-    tileO = GameBoard(input_candies[14],"O")
+    selection = input("1.Automatic or 2.Manual: ")
+    # if selection == "2":
 
-    # Setup initial board with given input
-    set_possible_movies_for_all_tiles()
-    set_neighbor_tiles()
+    if selection == "1":
+        print("Automatic")
+        os.system("python3 automatic_mode.py")
 
-    tile_object_lst = [tileA, tileB, tileC, tileD, tileE, tileF, tileG, tileH, tileI, tileJ, tileK, tileL, tileM, tileN, tileO]
+    for ls in lst:
+        sequence_of_move = ""
+        input_candies = []
+        for ip in ls:
+            if ip != " ":
+                input_candies.append(ip)
 
-    for tile_object in tile_object_lst:
-        if tile_object.get_candy_value() == "e":
-            empty_tile = tile_object
+        draw_state(input_candies)
+        print("")
 
-    while not check_goal_state():
-        game_input()
+        # Create object per each Tile.
+        tileA = GameBoard(input_candies[0], "A")
+        tileB = GameBoard(input_candies[1], "B")
+        tileC = GameBoard(input_candies[2], "C")
+        tileD = GameBoard(input_candies[3], "D")
+        tileE = GameBoard(input_candies[4], "E")
+        tileF = GameBoard(input_candies[5], "F")
+        tileG = GameBoard(input_candies[6], "G")
+        tileH = GameBoard(input_candies[7], "H")
+        tileI = GameBoard(input_candies[8], "I")
+        tileJ = GameBoard(input_candies[9], "J")
+        tileK = GameBoard(input_candies[10], "K")
+        tileL = GameBoard(input_candies[11], "L")
+        tileM = GameBoard(input_candies[12], "M")
+        tileN = GameBoard(input_candies[13], "N")
+        tileO = GameBoard(input_candies[14], "O")
+
+        # Setup initial board with given input
+        set_possible_movies_for_all_tiles()
+        set_neighbor_tiles()
+
+        tile_object_lst = [tileA, tileB, tileC, tileD, tileE, tileF, tileG, tileH, tileI, tileJ, tileK, tileL, tileM,
+                           tileN, tileO]
+
+        for tile_object in tile_object_lst:
+            if tile_object.get_candy_value() == "e":
+                empty_tile = tile_object
+
+        while not check_goal_state():
+            game_input()
+    output_file.write(str(all_solution_path))

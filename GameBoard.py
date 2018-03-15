@@ -10,6 +10,7 @@ class GameBoard:
         self.candy_object_right = None
         self.candy_object_up = None
         self.candy_object_down = None
+        self.possible_moves = []
 
     def set_candy_value(self, candy_value):
         self.candy_value = candy_value
@@ -26,7 +27,7 @@ class GameBoard:
     def set_possible_moves(self, possible_moves):
         self.possible_moves = possible_moves
 
-    def set_candy_object_left(self,candy_object_left):
+    def set_candy_object_left(self, candy_object_left):
         self.candy_object_left = candy_object_left
 
     def set_candy_object_right(self, candy_object_right):
