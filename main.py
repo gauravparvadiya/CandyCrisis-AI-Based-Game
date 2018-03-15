@@ -31,7 +31,7 @@ def check_goal_state():
 
     if a_to_e == k_to_o:
         print("You Won..!!")
-        output_file.write(sequence_of_move + "\n")
+        output_file.write(sequence_of_move.replace(" ", "") + "\n")
         output_file.write(str(len(sequence_of_move.replace(" ", ""))) + "\n")
         all_solution_path += len(sequence_of_move.replace(" ", ""))
         return True
@@ -203,7 +203,7 @@ if __name__ == "__main__":
         os.system("python3 automatic_mode.py")
     else:
         for ls in lst:
-            sequence_of_move = None
+            sequence_of_move = ""
             input_candies = []
             for ip in ls:
                 if ip != " ":
