@@ -211,27 +211,38 @@ def create_child_node(current_node):
 
     for possible_move in possible_moves:
         node_name, node_candy_setup, node_heuristic = move_tile(possible_move, empty_tile)
+        node_level = current_node.get_node_level() + 0.01
         node_parent = current_node
-        child_node = GameNode(node_name, node_candy_setup, node_heuristic, node_parent, possible_move)
+        child_node = GameNode(node_name, node_candy_setup, node_heuristic + current_node.get_node_level(), node_parent, possible_move, node_level)
+        # print(node_candy_setup)
+        # if child_node.get_node_level() <= current_node.get_node_level() + 1:
         open_list.append(child_node)
-    # print(open_list)
+        # for closed in closed_list:
+        #     # print(closed.get_node_candy_setup())
+        #     # print(node_candy_setup)
+        #     if node_candy_setup != closed.get_node_candy_setup():
+        #         # print("not equal")
+        #
+        #         break
     open_list.sort(key=lambda x: x.node_heuristic)
 
 
 # Move candy tile if the input is valid
 def move_tile(move, empty_tile):
     new_state = []
-
+    # second_row = ["F","G","H","I","J"]
     if move == "U" or move == "u":
         neighbour_tile = empty_tile.get_candy_object_up()
         temp = neighbour_tile.get_candy_value()
         empty_tile.set_candy_value(neighbour_tile.get_candy_value())
         neighbour_tile.set_candy_value("e")
+        node_name = neighbour_tile.get_tile_name()
         for new_tile_object in tile_object_lst:
             new_state.append(new_tile_object.get_candy_value())
-        heuristic = count_heuristic()
-        node_name = neighbour_tile.get_tile_name()
-        # empty_tile = neighbour_tile
+        # if node_name in second_row:
+        #     heuristic = count_heuristic()
+        # else:
+            heuristic = count_heuristic() + 1
         empty_tile.set_candy_value("e")
         neighbour_tile.set_candy_value(temp)
     elif move == "D" or move == "d":
@@ -243,8 +254,10 @@ def move_tile(move, empty_tile):
         # empty_tile = neighbour_tile
         for new_tile_object in tile_object_lst:
             new_state.append(new_tile_object.get_candy_value())
-        # empty_tile = neighbour_tile
-        heuristic = count_heuristic()
+        # if node_name in second_row:
+        #     heuristic = count_heuristic()
+        # else:
+            heuristic = count_heuristic() + 1
         empty_tile.set_candy_value("e")
         neighbour_tile.set_candy_value(temp)
     elif move == "L" or move == "l":
@@ -257,7 +270,10 @@ def move_tile(move, empty_tile):
         for new_tile_object in tile_object_lst:
             new_state.append(new_tile_object.get_candy_value())
         # empty_tile = neighbour_tile
-        heuristic = count_heuristic()
+        # if node_name in second_row:
+            heuristic = count_heuristic() + 2
+        # else:
+        #     heuristic = count_heuristic()
         empty_tile.set_candy_value("e")
         neighbour_tile.set_candy_value(temp)
     elif move == "R" or move == "r":
@@ -270,7 +286,10 @@ def move_tile(move, empty_tile):
         for new_tile_object in tile_object_lst:
             new_state.append(new_tile_object.get_candy_value())
         # empty_tile = neighbour_tile
-        heuristic = count_heuristic()
+        # if node_name in second_row:
+            heuristic = count_heuristic() + 2
+        # else:
+        #     heuristic = count_heuristic()
         empty_tile.set_candy_value("e")
         neighbour_tile.set_candy_value(temp)
 
@@ -297,14 +316,16 @@ def write_closed_list_to_file():
 def path_finder(initial_node):
     open_list.append(initial_node)
     # print(open_list)
-
+    i = 0
     while open_list:
+        # print(open_list)
+        # print(i)
+        # print(closed_list)
         current = open_list[0]
         # print(current)
         open_list.pop(0)
         closed_list.append(current)
-        # print("Open list")
-        # print(open_list)
+
         # draw_state(current.get_node_candy_setup())
         if check_goal_state(current):
             return
@@ -312,6 +333,7 @@ def path_finder(initial_node):
         # print("closed list")
         # print(closed_list)
         create_child_node(current)
+        i += 1
 
 
 if __name__ == "__main__":
@@ -366,8 +388,161 @@ if __name__ == "__main__":
             if tile_object.get_candy_value() == "e":
                 empty_tile1 = tile_object
 
-        initial = GameNode(empty_tile1.get_tile_name(), input_candies, count_heuristic(), None, "")
+        initial = GameNode(empty_tile1.get_tile_name(), input_candies, count_heuristic(), None, "", 0)
         path_finder(initial)
         output_file.write(str(round((timeit.default_timer() - start_time)*1000)) + "ms" + "\n")
+        write_closed_list_to_file()
+    output_file.write(str(all_solution_path))
+
+    inputs = list(open("input2.txt"))
+    output_file = open("output2.txt", "w+")
+    visual_trace = open("visual_trace2.txt", "w+")
+    all_solution_path = 0
+    # output_file.flush()
+    for inp in inputs:
+        start_time = timeit.default_timer()
+        input_candies = []
+        open_list = []
+        closed_list = []
+        for ip in inp:
+            if ip != " ":
+                input_candies.append(ip)
+        print("Initial State:")
+        draw_state(input_candies)
+
+        # Create object per each Tile.
+        tileA = GameBoard(input_candies[0], "A")
+        tileB = GameBoard(input_candies[1], "B")
+        tileC = GameBoard(input_candies[2], "C")
+        tileD = GameBoard(input_candies[3], "D")
+        tileE = GameBoard(input_candies[4], "E")
+        tileF = GameBoard(input_candies[5], "F")
+        tileG = GameBoard(input_candies[6], "G")
+        tileH = GameBoard(input_candies[7], "H")
+        tileI = GameBoard(input_candies[8], "I")
+        tileJ = GameBoard(input_candies[9], "J")
+        tileK = GameBoard(input_candies[10], "K")
+        tileL = GameBoard(input_candies[11], "L")
+        tileM = GameBoard(input_candies[12], "M")
+        tileN = GameBoard(input_candies[13], "N")
+        tileO = GameBoard(input_candies[14], "O")
+
+        # Setup initial board with given input
+        set_possible_movies_for_all_tiles()
+        set_neighbor_tiles()
+
+        tile_object_lst = [tileA, tileB, tileC, tileD, tileE, tileF, tileG, tileH, tileI, tileJ, tileK, tileL, tileM,
+                           tileN,
+                           tileO]
+
+        for tile_object in tile_object_lst:
+            if tile_object.get_candy_value() == "e":
+                empty_tile1 = tile_object
+
+        initial = GameNode(empty_tile1.get_tile_name(), input_candies, count_heuristic(), None, "", 0)
+        path_finder(initial)
+        output_file.write(str(round((timeit.default_timer() - start_time) * 1000)) + "ms" + "\n")
+        write_closed_list_to_file()
+    output_file.write(str(all_solution_path))
+
+    inputs = list(open("input3.txt"))
+    output_file = open("output3.txt", "w+")
+    visual_trace = open("visual_trace3.txt", "w+")
+    all_solution_path = 0
+    # output_file.flush()
+    for inp in inputs:
+        start_time = timeit.default_timer()
+        input_candies = []
+        open_list = []
+        closed_list = []
+        for ip in inp:
+            if ip != " ":
+                input_candies.append(ip)
+        print("Initial State:")
+        draw_state(input_candies)
+
+        # Create object per each Tile.
+        tileA = GameBoard(input_candies[0], "A")
+        tileB = GameBoard(input_candies[1], "B")
+        tileC = GameBoard(input_candies[2], "C")
+        tileD = GameBoard(input_candies[3], "D")
+        tileE = GameBoard(input_candies[4], "E")
+        tileF = GameBoard(input_candies[5], "F")
+        tileG = GameBoard(input_candies[6], "G")
+        tileH = GameBoard(input_candies[7], "H")
+        tileI = GameBoard(input_candies[8], "I")
+        tileJ = GameBoard(input_candies[9], "J")
+        tileK = GameBoard(input_candies[10], "K")
+        tileL = GameBoard(input_candies[11], "L")
+        tileM = GameBoard(input_candies[12], "M")
+        tileN = GameBoard(input_candies[13], "N")
+        tileO = GameBoard(input_candies[14], "O")
+
+        # Setup initial board with given input
+        set_possible_movies_for_all_tiles()
+        set_neighbor_tiles()
+
+        tile_object_lst = [tileA, tileB, tileC, tileD, tileE, tileF, tileG, tileH, tileI, tileJ, tileK, tileL, tileM,
+                           tileN,
+                           tileO]
+
+        for tile_object in tile_object_lst:
+            if tile_object.get_candy_value() == "e":
+                empty_tile1 = tile_object
+
+        initial = GameNode(empty_tile1.get_tile_name(), input_candies, count_heuristic(), None, "",0)
+        path_finder(initial)
+        output_file.write(str(round((timeit.default_timer() - start_time) * 1000)) + "ms" + "\n")
+        write_closed_list_to_file()
+    output_file.write(str(all_solution_path))
+
+    inputs = list(open("input4.txt"))
+    output_file = open("output4.txt", "w+")
+    visual_trace = open("visual_trace4.txt", "w+")
+    all_solution_path = 0
+    # output_file.flush()
+    for inp in inputs:
+        start_time = timeit.default_timer()
+        input_candies = []
+        open_list = []
+        closed_list = []
+        for ip in inp:
+            if ip != " ":
+                input_candies.append(ip)
+        print("Initial State:")
+        draw_state(input_candies)
+
+        # Create object per each Tile.
+        tileA = GameBoard(input_candies[0], "A")
+        tileB = GameBoard(input_candies[1], "B")
+        tileC = GameBoard(input_candies[2], "C")
+        tileD = GameBoard(input_candies[3], "D")
+        tileE = GameBoard(input_candies[4], "E")
+        tileF = GameBoard(input_candies[5], "F")
+        tileG = GameBoard(input_candies[6], "G")
+        tileH = GameBoard(input_candies[7], "H")
+        tileI = GameBoard(input_candies[8], "I")
+        tileJ = GameBoard(input_candies[9], "J")
+        tileK = GameBoard(input_candies[10], "K")
+        tileL = GameBoard(input_candies[11], "L")
+        tileM = GameBoard(input_candies[12], "M")
+        tileN = GameBoard(input_candies[13], "N")
+        tileO = GameBoard(input_candies[14], "O")
+
+        # Setup initial board with given input
+        set_possible_movies_for_all_tiles()
+        set_neighbor_tiles()
+
+        tile_object_lst = [tileA, tileB, tileC, tileD, tileE, tileF, tileG, tileH, tileI, tileJ, tileK, tileL, tileM,
+                           tileN,
+                           tileO]
+
+        for tile_object in tile_object_lst:
+            if tile_object.get_candy_value() == "e":
+                empty_tile1 = tile_object
+
+        initial = GameNode(empty_tile1.get_tile_name(), input_candies, count_heuristic(), None, "", 0)
+        path_finder(initial)
+        output_file.write(str(round((timeit.default_timer() - start_time) * 1000)) + "ms" + "\n")
         write_closed_list_to_file()
     output_file.write(str(all_solution_path))
